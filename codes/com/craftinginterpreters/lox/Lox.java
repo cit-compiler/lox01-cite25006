@@ -47,8 +47,8 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         
-        for(Token token : tokens){
-            System.out.println(tokens);
+        for (Token token : tokens) {
+            System.out.println(token); // ← 1つずつのトークン(token)を表示するのが正解
         }
         //line, "", message
         if (hadError) System.exit(65);

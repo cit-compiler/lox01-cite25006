@@ -1,8 +1,7 @@
 package com.craftinginterpreters.lox;
 
-import java.util.List;
-
 import static com.craftinginterpreters.lox.TokenType.*;
+import java.util.List;
 
 class Parser {
     private static class ParseError extends RuntimeException {}
@@ -15,6 +14,14 @@ class Parser {
     private  Expr expression(){
         return equality();
 
+    }
+
+    Expr parse() {
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
     }
 
     private Expr equality() {
@@ -84,10 +91,11 @@ class Parser {
         }
 
         if (match(LEFT_PAREN)) {
-        Expr expr = expression();
-        consume(RIGHT_PAREN, "Expect ')' after expression.");
-        return new Expr.Grouping(expr);
+            Expr expr = expression();
+            consume(RIGHT_PAREN, "Expect ')' after expression.");
+            return new Expr.Grouping(expr);
         }
+        throw error(peek(), "Expect expression.");
     }
 
     private boolean match(TokenType... types) {
@@ -133,11 +141,26 @@ class Parser {
         return new ParseError();
     }
 
-    static void error(Token token, String message) {
-        if (token.type == TokenType.EOF) {
-        report(token.line, " at end", message);
-        } else {
-        report(token.line, " at '" + token.lexeme + "'", message);
+    
+    private void synchronize() {
+        advance();
+
+        while (!isAtEnd()) {
+        if (previous().type == SEMICOLON) return;
+
+        switch (peek().type) {
+            case CLASS:
+            case FUN:
+            case VAR:
+            case FOR:
+            case IF:
+            case WHILE:
+            case PRINT:
+            case RETURN:
+            return;
+        }
+
+        advance();
         }
     }
 

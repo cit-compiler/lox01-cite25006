@@ -46,6 +46,20 @@ class Interpreter implements Expr.Visitor<Object> {
 
         return a.equals(b);
     }
+      private String stringify(Object object) {
+    if (object == null) return "nil";
+
+    if (object instanceof Double) {
+      String text = object.toString();
+      if (text.endsWith(".0")) {
+        text = text.substring(0, text.length() - 2);
+      }
+      return text;
+    }
+
+    return object.toString();
+  }
+
     private Object evaluate(Expr expr) {
         return expr.accept(this);
     }
@@ -76,7 +90,7 @@ class Interpreter implements Expr.Visitor<Object> {
                 return isEqual(left, right);
 
             case MINUS:
-                
+                checkNumberOperands(expr.operator, left, right);
                 return (double)left - (double)right;
             case PLUS:
                 if (left instanceof Double && right instanceof Double) {
@@ -91,8 +105,10 @@ class Interpreter implements Expr.Visitor<Object> {
 
             break;
                 case SLASH:
+                    checkNumberOperands(expr.operator, left, right);
                     return (double)left / (double)right;
                 case STAR:
+                    checkNumberOperands(expr.operator, left, right);
                     return (double)left * (double)right;
                 
         }
@@ -100,4 +116,13 @@ class Interpreter implements Expr.Visitor<Object> {
         // Unreachable.
         return null;
     }
+      void interpret(Expr expression) { 
+    try {
+      Object value = evaluate(expression);
+      System.out.println(stringify(value));
+    } catch (RuntimeError error) {
+      Lox.runtimeError(error);
+    }
+  }
+
 }

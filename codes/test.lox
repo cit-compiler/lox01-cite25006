@@ -1,0 +1,5 @@
+// test.lox
+var a = 10;
+var b = 20;
+print "合計は:";
+print a + b;

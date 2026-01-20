@@ -1,0 +1,11 @@
+// 変数は使えるが、ブロックはまだ使えない段階のサンプル
+var a = 10;
+var b = 20;
+var c = "ccc";
+var cond = true;
+
+print a + b;
+cond = false;
+print cond;
+print a / b;
+print c + d;

@@ -1,0 +1,16 @@
+// 変数の定義が2回ある場合のサンプル
+var a = 10;
+var b = 20;
+var c = "ccc";
+var cond = true;
+
+print a + b;
+cond = false;
+print cond;
+print a / b;
+print c + d;
+
+var a = 40;
+var d = c;
+print a;
+print d;

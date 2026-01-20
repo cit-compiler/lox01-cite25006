@@ -1,11 +1,10 @@
-package com.craftinginterpreters.lox;
+package com.craftinginterpreters.lox_s;
+import static com.craftinginterpreters.lox_s.TokenType.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static com.craftinginterpreters.lox.TokenType.*; 
-import java.lang.foreign.AddressLayout;
+import java.util.Map; 
+//import java.lang.foreign.AddressLayout;
 
 class Scanner {
     private final String source;
@@ -64,6 +63,7 @@ class Scanner {
             case '+': addToken(PLUS); break;
             case ';': addToken(SEMICOLON); break;
             case '*': addToken(STAR); break;
+            
             case '!':
                 addToken(match('=') ? BANG_EQUAL : BANG);
                 break;
@@ -88,11 +88,12 @@ class Scanner {
             case '\r':
             case '\t':
                 break;
-             case '\n':
+            case '\n':
                 line++;
                 break; 
 
-            case '"':string(); break;
+            case '"':  string('"'); break;  // 引数に開始記号を渡すように変更
+            case '\'': string('\''); break;
 
             default:
             if (isDigit(c)) {
@@ -173,18 +174,23 @@ class Scanner {
     private boolean isDigit(char c) {
         return c >= '0' && c <= '9';
     } 
-    private void string(){
-        while(peek() != '"' && !isAtEnd()){
+    private void string(char quote){
+    // 引数で受け取った quote ( " または ' ) と比較するようにします
+        while(peek() != quote && !isAtEnd()){ 
             if (peek() == '\n') line++;
             advance();
         }
+
         if (isAtEnd()){
-            Lox.error(line, "Unterminated string");
+            Lox.error(line, "Unterminated string.");
             return;
         }
+
+        // 終了記号を消費
         advance();
 
-        String value = source.substring(start +1 , current - 1);
+        // 文字列の中身を抽出
+        String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
     }
     
